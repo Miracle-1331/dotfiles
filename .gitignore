@@ -1,0 +1,5 @@
+# Machine-local secrets and overrides — never commit these.
+home/.zshrc.local
+
+# macOS junk
+.DS_Store
