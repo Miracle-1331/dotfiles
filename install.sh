@@ -183,6 +183,19 @@ step_versions() {
   fi
 }
 
+step_hooks() {
+  log "Enabling repo-local git hooks (gitleaks pre-commit)"
+  if ! git -C "$DOTFILES_DIR" rev-parse --git-dir >/dev/null 2>&1; then
+    warn "$DOTFILES_DIR is not a git checkout — skipping"
+    return
+  fi
+  git -C "$DOTFILES_DIR" config core.hooksPath "$DOTFILES_DIR/hooks"
+  ok "core.hooksPath -> $DOTFILES_DIR/hooks"
+  if ! command -v gitleaks >/dev/null 2>&1; then
+    warn "gitleaks not on PATH yet — run \`$(basename "$0") brew\` first"
+  fi
+}
+
 step_extras() {
   log "Extra CLIs (claude, it2)"
 
@@ -227,6 +240,7 @@ no arguments. Available steps:
   brew      Install Homebrew (Linuxbrew on Linux) + Brewfile packages
   omz       Install oh-my-zsh, powerlevel10k, and custom plugins
   link      Symlink files from home/ into \$HOME (with backup)
+  hooks     Point core.hooksPath at ./hooks (gitleaks pre-commit)
   versions  Install nvm and uv (goenv/tfenv come from Brewfile)
   extras    Install claude (Claude Code CLI) and it2 (via uv tool)
   macos     Apply macOS system defaults (no-op on Linux)
@@ -250,11 +264,11 @@ main() {
 
   local steps=()
   if [[ $# -eq 0 ]]; then
-    steps=(brew omz link versions extras macos)
+    steps=(brew omz link hooks versions extras macos)
   else
     for arg in "$@"; do
       case "$arg" in
-        brew|omz|link|versions|extras|macos) steps+=("$arg") ;;
+        brew|omz|link|hooks|versions|extras|macos) steps+=("$arg") ;;
         *) err "unknown step: $arg"; usage; exit 1 ;;
       esac
     done

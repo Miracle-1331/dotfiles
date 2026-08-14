@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Blocks `git commit` if gitleaks finds credential-shaped strings in the
+# staged diff. Activated by `install.sh hooks`, which points
+# `core.hooksPath` at this directory.
+#
+# Bypass in an emergency with:  git commit --no-verify
+# (but don't — rotate the secret and try again.)
+set -euo pipefail
+
+if ! command -v gitleaks >/dev/null 2>&1; then
+  cat >&2 <<'EOF'
+pre-commit: gitleaks not on PATH.
+
+Install with:  brew install gitleaks   (or ./install.sh brew)
+
+Refusing to commit — a missing scanner can't verify no secrets slipped in.
+EOF
+  exit 1
+fi
+
+# `git --pre-commit --staged` is the current recommended pre-commit invocation
+# (see `gitleaks git --help`). Redact secrets from stdout so they don't end
+# up in terminal scrollback if the hook fires.
+if ! gitleaks git --pre-commit --staged --redact --verbose --no-banner; then
+  cat >&2 <<'EOF'
+
+pre-commit: gitleaks flagged secret(s) in the staged diff.
+
+Next steps:
+  - remove the value from the file (and rotate it if it was ever real)
+  - false positive? add an entry to .gitleaks.toml [[allowlists]]
+    or annotate the line with:  # gitleaks:allow
+EOF
+  exit 1
+fi

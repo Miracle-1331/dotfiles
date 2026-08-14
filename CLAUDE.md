@@ -81,9 +81,13 @@ Three cross-cutting mechanisms are the load-bearing parts:
 ~/.zshrc.local`. `~/.zshrc.local` is gitignored via `.gitignore` at the repo
 root; `home/.zshrc.local.example` is the committed template. **All tokens,
 CF Access secrets, VAULT_HEADERS, ARGOCD_TOKEN, etc. belong in
-`~/.zshrc.local` — never in any tracked file.** The pre-commit habit here
-is to grep for `eyJ`, `CF_ACCESS_CLIENT_SECRET`, `ARGOCD_TOKEN=`, and
-`PRIVATE KEY` before staging.
+`~/.zshrc.local` — never in any tracked file.**
+
+A pre-commit hook at `hooks/pre-commit` runs `gitleaks git --pre-commit
+--staged` on every commit (activated by `install.sh hooks`, which points
+`core.hooksPath` at `./hooks`). It's the enforcement layer for the rule
+above. `.github/workflows/trivy.yml` re-scans full history in CI as a
+belt-and-suspenders backstop.
 
 ## Repo-specific quirks
 

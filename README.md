@@ -59,6 +59,7 @@ Run everything, or one step at a time:
 | `brew` | Installs Homebrew (Linuxbrew on Ubuntu, prereq apt packages first), then `brew bundle` |
 | `omz` | Installs oh-my-zsh, powerlevel10k, and the two custom plugins |
 | `link` | Symlinks every file in `home/` into `$HOME`, backing up existing files first |
+| `hooks` | Points `core.hooksPath` at `./hooks` so `gitleaks` runs before every commit |
 | `versions` | Installs `nvm` and `uv` (goenv/tfenv come from Brewfile) |
 | `extras` | Installs Claude Code CLI (`claude`) and `it2` via `uv tool install` |
 | `macos` | Applies macOS `defaults` (no-op on Linux) |
@@ -74,6 +75,12 @@ $EDITOR ~/.zshrc.local        # fill in ARGOCD_TOKEN, VAULT_HEADERS, etc.
 ```
 
 Never commit real secrets to `home/.zshrc` or any other tracked file.
+
+After running `./install.sh hooks` (bundled into a full run), every `git
+commit` in this repo is gated by `hooks/pre-commit` — it runs `gitleaks
+git --pre-commit --staged` and blocks the commit if any credential-shaped
+string appears in the staged diff. Bypass in a genuine emergency with
+`git commit --no-verify` (then rotate the secret and try again).
 
 ## Existing files are never lost
 
