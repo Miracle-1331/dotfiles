@@ -1,0 +1,54 @@
+# SAST via CodeQL.
+#
+# The repo is mostly bash (which CodeQL doesn't support). Ruby is enabled so
+# the Brewfile and any future Ruby helpers get scanned. Findings surface in
+# the "Security" tab under Code scanning alerts.
+#
+# All actions are pinned by commit SHA per GitHub's hardening guidance:
+# https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions
+# The trailing `# vX.Y.Z` comment records which released tag the SHA came
+# from — bump both together when upgrading.
+name: CodeQL
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Weekly rescan so newly-disclosed queries hit unchanged code too.
+    - cron: '17 6 * * 1'
+  workflow_dispatch:
+
+# Deny-all default; jobs re-grant only what they need.
+permissions: {}
+
+jobs:
+  analyze:
+    name: analyze (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read          # checkout
+      security-events: write  # upload SARIF to Security tab
+      actions: read           # required for private repos to read workflow status
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ruby]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@f3712979fa5f215279b101dd0a2e3bdfb4353324 # v3.37.7
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-and-quality
+
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@f3712979fa5f215279b101dd0a2e3bdfb4353324 # v3.37.7
+        with:
+          category: /language:${{ matrix.language }}

@@ -1,0 +1,88 @@
+# SCA + secret scanning via Trivy.
+#
+# Two jobs:
+#   - fs      : filesystem vulnerability + misconfig scan. Currently
+#               near-empty (no lockfiles), but future-proofed for when the
+#               repo picks up tracked deps.
+#   - secret  : full-history secret scan. Belt-and-suspenders against
+#               committing tokens even though ~/.zshrc.local is gitignored.
+#
+# Both upload SARIF to the Security tab. High/critical findings fail the run.
+#
+# Actions pinned by commit SHA — see the codeql.yml comment for rationale.
+name: Trivy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '19 6 * * 1'
+  workflow_dispatch:
+
+# Deny-all default; jobs re-grant only what they need.
+permissions: {}
+
+jobs:
+  fs:
+    name: filesystem scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Trivy filesystem scan
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln,misconfig
+          format: sarif
+          output: trivy-fs.sarif
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: '1'
+
+      - name: Upload SARIF to GitHub Security
+        if: always()
+        uses: github/codeql-action/upload-sarif@f3712979fa5f215279b101dd0a2e3bdfb4353324 # v3.37.7
+        with:
+          sarif_file: trivy-fs.sarif
+          category: trivy-fs
+
+  secret:
+    name: secret scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout (full history)
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          fetch-depth: 0
+
+      - name: Trivy secret scan
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: secret
+          format: sarif
+          output: trivy-secrets.sarif
+          exit-code: '1'
+
+      - name: Upload SARIF to GitHub Security
+        if: always()
+        uses: github/codeql-action/upload-sarif@f3712979fa5f215279b101dd0a2e3bdfb4353324 # v3.37.7
+        with:
+          sarif_file: trivy-secrets.sarif
+          category: trivy-secrets
