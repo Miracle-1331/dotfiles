@@ -22,11 +22,10 @@ brew bundle check --verbose --file=Brewfile   # compare Brewfile to installed fo
 brew bundle --file=Brewfile                   # install anything missing
 ```
 
-`brew bundle check` will always report `awscli` and `cask docker-desktop`
-as "missing" on the source machine — they were installed via Amazon's pkg
-installer and Docker Desktop's `.dmg`, not via Homebrew. On a fresh
-machine, `brew bundle` will install them properly. Do not "fix" the diff
-by removing those lines.
+`brew bundle check` will always report `awscli` as "missing" on the
+source machine — it was installed via Amazon's pkg installer, not via
+Homebrew. On a fresh machine, `brew bundle` will install it properly.
+Do not "fix" the diff by removing that line.
 
 ## Architecture
 
@@ -95,10 +94,12 @@ belt-and-suspenders backstop.
   **global** git ignore (`~/.config/git/ignore` → `**/.claude/settings.local.json`),
   not by this repo's `.gitignore`. It won't show up in `git status`; don't
   try to add it.
-- On Apple Silicon the source machine has Docker Desktop at
-  `/Applications/Docker.app` (`/usr/local/bin/docker`) AND the brew
-  `docker` CLI formula. The Brewfile keeps the formula as a fallback for
-  Linux and CI, and adds `cask "docker-desktop"` for fresh Macs. Both
-  coexisting on the source machine is expected, not a bug.
-- `brew "colima"` and `cask "docker-desktop"` are mutually redundant on
-  a fresh Mac. Users pick one; the Brewfile installs both by default.
+- Container runtime on macOS is **colima**, not Docker Desktop. The
+  Brewfile installs `brew "docker"` (CLI) + `brew "colima"` (daemon).
+  If a fresh Mac still has `Docker.app` from a prior install, uninstall
+  it before running `install.sh` — otherwise its `docker` at
+  `/usr/local/bin/docker` will shadow the brew CLI, and its completion
+  symlinks will conflict with the `docker` formula's link step.
+- `tflint` is shipped by `terraform-linters/tap` as a **cask**, not a
+  formula. It lives inside the `if OS.mac?` block alongside colima.
+  Linux users who want it must install manually.

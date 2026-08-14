@@ -3,6 +3,7 @@
 
 tap "argoproj/tap"
 tap "hashicorp/tap"
+tap "terraform-linters/tap"
 
 # --- Linters, formatters, dev-loop --------------------------------------------
 brew "actionlint"        # GitHub Actions workflow linter
@@ -26,7 +27,7 @@ brew "k3d"
 brew "istioctl"
 brew "argocd"
 brew "argoproj/tap/kubectl-argo-rollouts"
-brew "docker"            # CLI (Docker Desktop ships its own CLI too — this is a fallback)
+brew "docker"            # docker CLI (colima on macOS, dockerd on Linux)
 brew "docker-buildx"
 brew "docker-compose"
 
@@ -36,13 +37,12 @@ brew "awscli"            # AWS CLI v2
 # --- macOS-only ---------------------------------------------------------------
 # Casks aren't supported on Linuxbrew; colima is macOS-only in practice.
 if OS.mac?
-  brew "colima"          # rootless container runtime alternative to Docker Desktop
-  cask "docker-desktop"  # Docker Desktop.app — accept the license on first launch
+  brew "colima"          # rootless container runtime — the docker daemon on macOS
+  cask "tflint"          # terraform-linters ships tflint as a cask, not a formula
 end
 
 # --- Terraform / IaC ----------------------------------------------------------
 brew "tfenv"             # terraform version manager
-brew "tflint"
 
 # --- Supply-chain / security --------------------------------------------------
 brew "cosign"

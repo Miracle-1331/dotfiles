@@ -104,6 +104,15 @@ step_brew() {
     brew_shellenv || { err "brew not on PATH after install"; return 1; }
   fi
 
+  # Newer Homebrew refuses formulae from untrusted third-party taps until
+  # `brew trust` is run. Trust every tap declared in the Brewfile so
+  # `brew bundle` on a fresh machine doesn't stop mid-run.
+  local tap
+  while IFS= read -r tap; do
+    brew trust "$tap" >/dev/null 2>&1 || true
+  done < <(grep -E '^[[:space:]]*tap[[:space:]]+"' "$DOTFILES_DIR/Brewfile" \
+             | sed -E 's/^[[:space:]]*tap[[:space:]]+"([^"]+)".*/\1/')
+
   log "brew bundle"
   brew bundle --file="$DOTFILES_DIR/Brewfile"
 }
