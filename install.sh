@@ -115,6 +115,41 @@ step_brew() {
 
   log "brew bundle"
   brew bundle --file="$DOTFILES_DIR/Brewfile"
+
+  install_docker_compose_plugin
+}
+
+# Compose v2 as a Docker CLI plugin (invoked as `docker compose`).
+# Downloaded from upstream releases into ~/.docker/cli-plugins/ so we don't
+# also get the standalone `docker-compose` binary the Homebrew formula ships.
+# Delete the plugin file and re-run `install.sh brew` to upgrade.
+install_docker_compose_plugin() {
+  local plugin_dir="$HOME/.docker/cli-plugins"
+  local plugin="$plugin_dir/docker-compose"
+
+  if [[ -x "$plugin" ]]; then
+    ok "docker compose plugin already installed ($("$plugin" version --short 2>/dev/null || echo present))"
+    return
+  fi
+
+  local plugin_os plugin_arch
+  case "$OS" in
+    macos) plugin_os=darwin ;;
+    linux) plugin_os=linux ;;
+  esac
+  case "$(uname -m)" in
+    arm64|aarch64) plugin_arch=aarch64 ;;
+    x86_64)        plugin_arch=x86_64 ;;
+    *) err "unsupported arch for docker compose plugin: $(uname -m)"; return 1 ;;
+  esac
+
+  warn "Installing docker compose plugin (latest from github.com/docker/compose)"
+  mkdir -p "$plugin_dir"
+  curl -fsSL \
+    "https://github.com/docker/compose/releases/latest/download/docker-compose-${plugin_os}-${plugin_arch}" \
+    -o "$plugin"
+  chmod +x "$plugin"
+  ok "docker compose -> $plugin"
 }
 
 step_omz() {

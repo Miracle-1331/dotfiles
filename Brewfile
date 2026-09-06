@@ -29,7 +29,9 @@ brew "argocd"
 brew "argoproj/tap/kubectl-argo-rollouts"
 brew "docker"            # docker CLI (colima on macOS, dockerd on Linux)
 brew "docker-buildx"
-brew "docker-compose"
+# docker compose (v2) is installed as a Docker CLI plugin by install.sh —
+# not via the `docker-compose` formula, which would also put a standalone
+# `docker-compose` binary on PATH.
 
 # --- Cloud CLIs ---------------------------------------------------------------
 brew "awscli"            # AWS CLI v2
