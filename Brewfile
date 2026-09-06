@@ -41,6 +41,7 @@ brew "awscli"            # AWS CLI v2
 if OS.mac?
   brew "colima"          # rootless container runtime — the docker daemon on macOS
   cask "tflint"          # terraform-linters ships tflint as a cask, not a formula
+  cask "drawio"          # diagram editor (desktop app)
 end
 
 # --- Terraform / IaC ----------------------------------------------------------
