@@ -66,3 +66,6 @@ ss() {
 command -v kubectl >/dev/null 2>&1 && source <(kubectl completion zsh)
 
 autoload -U +X bashcompinit && bashcompinit
+
+# rancher-lab (Lima + RKE2 + Rancher mgmt cluster)
+export KUBECONFIG="$HOME/.kube/rancher-lab-mgmt.yaml"
