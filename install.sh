@@ -225,6 +225,21 @@ step_versions() {
     warn "Installing uv"
     curl -LsSf https://astral.sh/uv/install.sh | sh
   fi
+
+  # tfenv ships with no Terraform installed and no global version pinned, so
+  # a fresh `terraform` call errors out ("Version could not be resolved").
+  # Install `latest` and set it as the global default. tfenv 3.x reads its
+  # version file from ${TFENV_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/tfenv}.
+  if command -v tfenv >/dev/null 2>&1; then
+    local tfenv_version_file="${TFENV_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/tfenv}/version"
+    if [[ -f "$tfenv_version_file" ]]; then
+      ok "tfenv default already set ($(cat "$tfenv_version_file"))"
+    else
+      warn "Installing latest terraform via tfenv"
+      tfenv install latest
+      tfenv use latest
+    fi
+  fi
 }
 
 step_hooks() {
