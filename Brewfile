@@ -1,7 +1,6 @@
 # Managed by install.sh — `brew bundle --file=Brewfile`.
 # Snapshot of `brew leaves` on the source machine.
 
-tap "argoproj/tap"
 tap "hashicorp/tap"
 tap "terraform-linters/tap"
 
@@ -22,11 +21,8 @@ brew "watch"
 # --- Kubernetes / container ecosystem -----------------------------------------
 brew "kubernetes-cli"    # kubectl (bundles `kubectl kustomize`)
 brew "helm"
-brew "kind"
 brew "k3d"
-brew "istioctl"
 brew "argocd"
-brew "argoproj/tap/kubectl-argo-rollouts"
 brew "docker"            # docker CLI (colima on macOS, dockerd on Linux)
 brew "docker-buildx"
 # docker compose (v2) is installed as a Docker CLI plugin by install.sh —
@@ -35,20 +31,26 @@ brew "docker-buildx"
 
 # --- Cloud CLIs ---------------------------------------------------------------
 brew "awscli"            # AWS CLI v2
+brew "azure-cli"         # Azure CLI (`az`)
 
 # --- macOS-only ---------------------------------------------------------------
 # Casks aren't supported on Linuxbrew; colima is macOS-only in practice.
 if OS.mac?
   brew "colima"          # rootless container runtime — the docker daemon on macOS
   cask "tflint"          # terraform-linters ships tflint as a cask, not a formula
-  cask "drawio"          # diagram editor (desktop app)
 end
 
 # --- Terraform / IaC ----------------------------------------------------------
 brew "tfenv"             # terraform version manager
 
+# --- Networking ---------------------------------------------------------------
+brew "nmap"              # port scanner / host discovery
+brew "tcpdump"           # packet capture (may need sudo)
+brew "mtr"               # traceroute + ping combined
+brew "iperf3"            # network throughput benchmarking
+brew "bind"              # dig, host, nslookup (keg-only — add $(brew --prefix bind)/bin to PATH)
+
 # --- Supply-chain / security --------------------------------------------------
-brew "cosign"
 brew "trivy"
 
 # --- Languages / runtimes -----------------------------------------------------
