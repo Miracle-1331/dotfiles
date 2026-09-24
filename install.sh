@@ -91,7 +91,8 @@ step_brew() {
     log "apt prerequisites for Linuxbrew and shell tools"
     sudo apt-get update
     sudo apt-get install -y \
-      build-essential procps curl file git zsh ca-certificates
+      build-essential procps curl file git zsh ca-certificates \
+      fonts-jetbrains-mono
   fi
 
   log "Homebrew"

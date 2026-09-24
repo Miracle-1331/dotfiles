@@ -36,8 +36,9 @@ brew "azure-cli"         # Azure CLI (`az`)
 # --- macOS-only ---------------------------------------------------------------
 # Casks aren't supported on Linuxbrew; colima is macOS-only in practice.
 if OS.mac?
-  brew "colima"          # rootless container runtime — the docker daemon on macOS
-  cask "tflint"          # terraform-linters ships tflint as a cask, not a formula
+  brew "colima"                 # rootless container runtime — the docker daemon on macOS
+  cask "tflint"                 # terraform-linters ships tflint as a cask, not a formula
+  cask "font-jetbrains-mono"    # terminal / editor font
 end
 
 # --- Terraform / IaC ----------------------------------------------------------
