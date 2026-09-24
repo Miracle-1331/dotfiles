@@ -7,6 +7,12 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 	source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+# --- Claude Code -------------------------------------------------------------
+# Strip inherited child-session marker so new interactive shells start clean
+# and their claude sessions persist transcripts. Leaks in via process ancestry
+# when a terminal is opened from within a claude-spawned shell.
+unset CLAUDE_CODE_CHILD_SESSION
+
 # --- Oh My Zsh ----------------------------------------------------------------
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="powerlevel10k/powerlevel10k"
