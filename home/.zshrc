@@ -75,3 +75,4 @@ autoload -U +X bashcompinit && bashcompinit
 
 # rancher-lab (Lima + RKE2 + Rancher mgmt cluster)
 export KUBECONFIG="$HOME/.kube/rancher-lab-mgmt.yaml"
+. "/Users/miracle/.acme.sh/acme.sh.env"
