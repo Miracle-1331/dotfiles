@@ -19,7 +19,7 @@ The script is idempotent — safe to re-run at any time.
 | Package manager | Homebrew on macOS, Linuxbrew on Ubuntu |
 | Shell | zsh + oh-my-zsh + powerlevel10k (with `zsh-autosuggestions` and `zsh-syntax-highlighting`) |
 | Version managers | `nvm` (Node), `uv` (Python), `goenv` (Go), `tfenv` (Terraform) |
-| Kubernetes | `kubectl`, `helm`, `kind`, `k3d`, `istioctl`, `argocd`, `kubectl-argo-rollouts` |
+| Kubernetes | `kubectl`, `helm`, `kind`, `k3d`, `istioctl`, `argocd`, `kubectl-argo-rollouts`, Freelens (macOS) |
 | Containers | `podman` + `podman-compose` (use `podman compose`) |
 | Cloud | `awscli` |
 | IaC & security | `tfenv`, `tflint`, `cosign`, `trivy`, `gitleaks` |
@@ -101,7 +101,7 @@ backup directory.
   JetBrains Mono Medium 15 (installed by the Brewfile) and a portable home path.
   To change its settings permanently, edit `config/iterm2/profiles.json`;
   iTerm2 monitors the linked dynamic profile file for changes.
-- macOS-only casks (`iterm2`, `tflint`, `font-jetbrains-mono`) are wrapped in
+- macOS-only casks (`freelens`, `iterm2`, `tflint`, `font-jetbrains-mono`) are wrapped in
   `if OS.mac?` in the Brewfile — Linuxbrew skips them cleanly.
 - On macOS, initialize and start the Podman VM after installation:
   `podman machine init`, then `podman machine start`. On subsequent runs,
