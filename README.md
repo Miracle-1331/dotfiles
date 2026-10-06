@@ -20,7 +20,7 @@ The script is idempotent — safe to re-run at any time.
 | Shell | zsh + oh-my-zsh + powerlevel10k (with `zsh-autosuggestions` and `zsh-syntax-highlighting`) |
 | Version managers | `nvm` (Node), `uv` (Python), `goenv` (Go), `tfenv` (Terraform) |
 | Kubernetes | `kubectl`, `helm`, `kind`, `k3d`, `istioctl`, `argocd`, `kubectl-argo-rollouts` |
-| Containers | `docker` CLI + Buildx + Compose, `colima` (macOS), Docker Desktop cask (macOS) |
+| Containers | `podman` + `podman-compose` (use `podman compose`) |
 | Cloud | `awscli` |
 | IaC & security | `tfenv`, `tflint`, `cosign`, `trivy`, `gitleaks` |
 | Editors & shell tooling | `neovim`, `gh`, `jq`, `yq`, `tree`, `htop`, `watch`, `actionlint`, `shfmt` |
@@ -95,8 +95,14 @@ backup directory.
 
 ## Cross-platform notes
 
-- macOS-only entries (`cask "docker-desktop"`, `brew "colima"`) are wrapped in
+- macOS-only casks (`tflint`, `font-jetbrains-mono`) are wrapped in
   `if OS.mac?` in the Brewfile — Linuxbrew skips them cleanly.
+- On macOS, initialize and start the Podman VM after installation:
+  `podman machine init`, then `podman machine start`. On subsequent runs,
+  only start the existing machine. Linux runs Podman directly.
+- Use `podman` (or the `d` shell alias) for container commands and
+  `podman compose` for Compose projects. Existing Docker Desktop, Docker CLI,
+  and Colima installations are not removed by this bootstrap.
 - The `macos` step is a no-op on Linux.
 - On Ubuntu, `install.sh` runs `sudo apt-get install -y build-essential procps
   curl file git zsh ca-certificates` before bootstrapping Linuxbrew.

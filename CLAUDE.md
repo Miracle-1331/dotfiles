@@ -50,8 +50,8 @@ Three cross-cutting mechanisms are the load-bearing parts:
    walks `home/*` and calls `link` for each entry.
 
 3. **`if OS.mac?` guards** — the Brewfile is Ruby. Casks aren't supported by
-   Linuxbrew, and `colima` is macOS-only, so both live inside an
-   `if OS.mac? ... end` block. Add any future macOS-only formulae there.
+   Linuxbrew, so casks live inside an `if OS.mac? ... end` block. Add any
+   future macOS-only formulae there.
 
 ## Adding things
 
@@ -94,12 +94,12 @@ belt-and-suspenders backstop.
   **global** git ignore (`~/.config/git/ignore` → `**/.claude/settings.local.json`),
   not by this repo's `.gitignore`. It won't show up in `git status`; don't
   try to add it.
-- Container runtime on macOS is **colima**, not Docker Desktop. The
-  Brewfile installs `brew "docker"` (CLI) + `brew "colima"` (daemon).
-  If a fresh Mac still has `Docker.app` from a prior install, uninstall
-  it before running `install.sh` — otherwise its `docker` at
-  `/usr/local/bin/docker` will shadow the brew CLI, and its completion
-  symlinks will conflict with the `docker` formula's link step.
+- Container tooling is **Podman** + **podman-compose**. The Brewfile installs
+  both on macOS and Linux. On macOS, users initialize and start a VM with
+  `podman machine init` and `podman machine start`; Linux runs Podman directly.
+  The shell alias `d` invokes `podman`. The bootstrap does not uninstall
+  previously installed container tooling.
+
 - `tflint` is shipped by `terraform-linters/tap` as a **cask**, not a
-  formula. It lives inside the `if OS.mac?` block alongside colima.
+  formula. It lives inside the `if OS.mac?` block alongside the font cask.
   Linux users who want it must install manually.

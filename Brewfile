@@ -23,20 +23,16 @@ brew "kubernetes-cli"    # kubectl (bundles `kubectl kustomize`)
 brew "helm"
 brew "k3d"
 brew "argocd"
-brew "docker"            # docker CLI (colima on macOS, dockerd on Linux)
-brew "docker-buildx"
-# docker compose (v2) is installed as a Docker CLI plugin by install.sh —
-# not via the `docker-compose` formula, which would also put a standalone
-# `docker-compose` binary on PATH.
+brew "podman"            # container engine (uses a VM on macOS)
+brew "podman-compose"    # Compose provider for `podman compose`
 
 # --- Cloud CLIs ---------------------------------------------------------------
 brew "awscli"            # AWS CLI v2
 brew "azure-cli"         # Azure CLI (`az`)
 
 # --- macOS-only ---------------------------------------------------------------
-# Casks aren't supported on Linuxbrew; colima is macOS-only in practice.
+# Casks aren't supported on Linuxbrew.
 if OS.mac?
-  brew "colima"                 # rootless container runtime — the docker daemon on macOS
   cask "tflint"                 # terraform-linters ships tflint as a cask, not a formula
   cask "font-jetbrains-mono"    # terminal / editor font
 end

@@ -34,7 +34,7 @@ fi
 alias cls=clear
 alias tf=terraform
 alias vi=nvim
-alias d=docker
+alias d=podman
 alias k=kubectl
 alias ga="git add"
 alias gc="git commit -m"
