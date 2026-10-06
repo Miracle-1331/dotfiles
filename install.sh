@@ -171,6 +171,15 @@ step_link() {
     fi
     link "$src" "$HOME/$base"
   done < <(find "$DOTFILES_DIR/home" -mindepth 1 -maxdepth 1 -print0 2>/dev/null || true)
+
+  if [[ "$OS" == macos ]]; then
+    local profile_file="$DOTFILES_DIR/config/iterm2/profiles.json"
+    local profile_guid
+    profile_guid="$(plutil -extract Profiles.0.Guid raw -o - "$profile_file")"
+    link "$profile_file" "$HOME/Library/Application Support/iTerm2/DynamicProfiles/dotfiles.json"
+    defaults write com.googlecode.iterm2 "Default Bookmark Guid" -string "$profile_guid"
+    ok "iTerm2 profile linked and selected as default (restart iTerm2 to apply)"
+  fi
 }
 
 step_versions() {
@@ -264,7 +273,7 @@ Supports macOS and Ubuntu/Debian. Runs every step in order when called with
 no arguments. Available steps:
   brew      Install Homebrew (Linuxbrew on Linux) + Brewfile packages
   omz       Install oh-my-zsh, powerlevel10k, and custom plugins
-  link      Symlink files from home/ into \$HOME (with backup)
+  link      Symlink dotfiles and restore iTerm2 profile on macOS (with backup)
   hooks     Point core.hooksPath at ./hooks (gitleaks pre-commit)
   versions  Install nvm and uv (goenv/tfenv come from Brewfile)
   extras    Install claude (Claude Code CLI) and it2 (via uv tool)

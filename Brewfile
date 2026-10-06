@@ -33,6 +33,7 @@ brew "azure-cli"         # Azure CLI (`az`)
 # --- macOS-only ---------------------------------------------------------------
 # Casks aren't supported on Linuxbrew.
 if OS.mac?
+  cask "iterm2"                # terminal application
   cask "tflint"                 # terraform-linters ships tflint as a cask, not a formula
   cask "font-jetbrains-mono"    # terminal / editor font
 end

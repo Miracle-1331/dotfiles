@@ -24,7 +24,7 @@ The script is idempotent — safe to re-run at any time.
 | Cloud | `awscli` |
 | IaC & security | `tfenv`, `tflint`, `cosign`, `trivy`, `gitleaks` |
 | Editors & shell tooling | `neovim`, `gh`, `jq`, `yq`, `tree`, `htop`, `watch`, `actionlint`, `shfmt` |
-| Extras | Claude Code CLI, `it2` (iTerm2 helper) |
+| Extras | iTerm2 (macOS), Claude Code CLI, `it2` (iTerm2 helper) |
 | macOS defaults | Keyboard, Finder, Dock, screenshots |
 
 Full package list lives in [`Brewfile`](./Brewfile).
@@ -34,6 +34,7 @@ Full package list lives in [`Brewfile`](./Brewfile).
 ```
 install.sh                   # entrypoint
 Brewfile                     # `brew bundle` package list (with `if OS.mac?` guards)
+config/iterm2/profiles.json   # saved iTerm2 profile (colors, font, keys, window settings)
 home/                        # files symlinked into $HOME
   .zshrc                     # interactive shell config
   .p10k.zsh                  # powerlevel10k customization
@@ -58,7 +59,7 @@ Run everything, or one step at a time:
 |---|---|
 | `brew` | Installs Homebrew (Linuxbrew on Ubuntu, prereq apt packages first), then `brew bundle` |
 | `omz` | Installs oh-my-zsh, powerlevel10k, and the two custom plugins |
-| `link` | Symlinks every file in `home/` into `$HOME`, backing up existing files first |
+| `link` | Symlinks files in `home/` into `$HOME`; on macOS also links the saved iTerm2 profile and selects it as default; backs up conflicting files |
 | `hooks` | Points `core.hooksPath` at `./hooks` so `gitleaks` runs before every commit |
 | `versions` | Installs `nvm` and `uv` (goenv/tfenv come from Brewfile) |
 | `extras` | Installs Claude Code CLI (`claude`) and `it2` via `uv tool install` |
@@ -95,7 +96,12 @@ backup directory.
 
 ## Cross-platform notes
 
-- macOS-only casks (`tflint`, `font-jetbrains-mono`) are wrapped in
+- On macOS, `./install.sh` installs iTerm2 and restores the saved `Dotfiles`
+  profile automatically. Restart iTerm2 after bootstrapping. The profile uses
+  JetBrains Mono Medium 15 (installed by the Brewfile) and a portable home path.
+  To change its settings permanently, edit `config/iterm2/profiles.json`;
+  iTerm2 monitors the linked dynamic profile file for changes.
+- macOS-only casks (`iterm2`, `tflint`, `font-jetbrains-mono`) are wrapped in
   `if OS.mac?` in the Brewfile — Linuxbrew skips them cleanly.
 - On macOS, initialize and start the Podman VM after installation:
   `podman machine init`, then `podman machine start`. On subsequent runs,

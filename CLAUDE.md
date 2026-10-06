@@ -66,6 +66,10 @@ Three cross-cutting mechanisms are the load-bearing parts:
   suffix for anything containing secrets that should be copied and edited,
   not linked.
 
+- **iTerm2 profile**: `config/iterm2/profiles.json` stores the portable dynamic
+  profile. The macOS `link` step links it into iTerm2's DynamicProfiles folder
+  and selects its GUID as the default. Edit this JSON to persist profile changes.
+
 - **New install step**: (1) write `step_<name>()`, (2) add `<name>` to the
   case-glob in `main` AND to the default `steps=(...)` array, (3) add a line
   to `usage()`. All three or the step is unreachable.
